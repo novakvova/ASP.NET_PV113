@@ -1,0 +1,58 @@
+﻿@using WebBomba.Models.Category
+@model List<CategoryViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Категорії</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Категорії</h1>
+        <form action="/Category/Add">
+            <div class="mb-3">
+                <label for="id" class="form-label">Id</label>
+                <input type="text" class="form-control" id="id" name="id">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Назва</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Опис</label>
+                <input type="text" class="form-control" id="description" name="description">
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Фото</label>
+                <input type="text" class="form-control" id="image" name="image">
+            </div>
+            <button type="submit" class="btn btn-primary">Додати</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Фото</th>
+                    <th scope="col">Назва</th>
+                    <th scope="col">Опис</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.Id</th>
+                        <td>@item.Image</td>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
