@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using WebBomba.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<DataEFContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection")));
 
 var app = builder.Build();
 
