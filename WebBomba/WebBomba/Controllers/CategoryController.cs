@@ -26,9 +26,20 @@ namespace WebBomba.Controllers
                 .ToList();
             return View(list);
         }
+        //Метод використовуєть для відображення сторінки, де ми заповняємо інфомацію
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
         //Додати новий елемент
+        [HttpPost]
         public IActionResult Add(CategoryAddViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             CategoryEntity entity = new CategoryEntity();
             entity.Name = model.Name;
             entity.Description = model.Description;
