@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using WebBomba.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,19 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 
+var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+if(!Directory.Exists(dir))
+{ 
+    Directory.CreateDirectory(dir); 
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(dir),
+    RequestPath = "/images"
+});
+
+
+
 app.UseRouting();
 
 app.UseAuthorization();
@@ -28,5 +42,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Category}/{action=Index}/{id?}");
+
+//Початкова ініціалізація Бази даних
+app.SeedData();
 
 app.Run();

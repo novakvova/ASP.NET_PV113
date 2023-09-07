@@ -40,10 +40,18 @@ namespace WebBomba.Controllers
             {
                 return View();
             }
+            string fileExt = Path.GetExtension(model.Image.FileName).ToLower();
+            string imageName = Guid.NewGuid().ToString() + fileExt;
+            var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+            using (var stream = new FileStream(Path.Combine(dir, imageName), FileMode.Create))
+            {
+                model.Image.CopyTo(stream);
+            }
+
             CategoryEntity entity = new CategoryEntity();
             entity.Name = model.Name;
             entity.Description = model.Description;
-            entity.Image = model.Image;
+            entity.Image = imageName;
             _dataEFContext.Categories.Add(entity);
             _dataEFContext.SaveChanges();
             //вертає статус код 302 - потрібно перейти до списку категорій
