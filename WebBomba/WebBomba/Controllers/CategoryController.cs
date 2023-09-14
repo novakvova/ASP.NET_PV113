@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using WebBomba.Data;
 using WebBomba.Data.Entities;
+using WebBomba.Helpers;
+using WebBomba.Interfaces;
 using WebBomba.Models.Category;
 
 namespace WebBomba.Controllers
@@ -8,9 +11,11 @@ namespace WebBomba.Controllers
     public class CategoryController : Controller
     {
         private readonly DataEFContext _dataEFContext;
-        public CategoryController(DataEFContext dataEFContext)
+        private readonly IImageWorker _imageWorker;
+        public CategoryController(DataEFContext dataEFContext, IImageWorker imageWorker)
         {
             _dataEFContext = dataEFContext;
+            _imageWorker = imageWorker;
         }
         //private static List<CategoryViewModel> list = new List<CategoryViewModel>();
         public IActionResult Index()
@@ -36,17 +41,14 @@ namespace WebBomba.Controllers
         [HttpPost]
         public IActionResult Add(CategoryAddViewModel model)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             if (!ModelState.IsValid)
             {
                 return View();
             }
-            string fileExt = Path.GetExtension(model.Image.FileName).ToLower();
-            string imageName = Guid.NewGuid().ToString() + fileExt;
-            var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
-            using (var stream = new FileStream(Path.Combine(dir, imageName), FileMode.Create))
-            {
-                model.Image.CopyTo(stream);
-            }
+
+            string imageName = _imageWorker.ImageSave(model.Image);
 
             CategoryEntity entity = new CategoryEntity();
             entity.Name = model.Name;
@@ -54,6 +56,15 @@ namespace WebBomba.Controllers
             entity.Image = imageName;
             _dataEFContext.Categories.Add(entity);
             _dataEFContext.SaveChanges();
+            stopWatch.Stop();
+            // Get the elapsed time as a TimeSpan value.
+            TimeSpan ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,
+                ts.Milliseconds / 10);
+            Console.WriteLine("-----------RunTime---------" + elapsedTime);
             //вертає статус код 302 - потрібно перейти до списку категорій
             return RedirectToAction(nameof(Index));
         }

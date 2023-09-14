@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebBomba.Data;
+using WebBomba.Interfaces;
+using WebBomba.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IImageWorker, ImageWorker>();
 
 builder.Services.AddDbContext<DataEFContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection")));
