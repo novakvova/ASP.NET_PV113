@@ -1,23 +1,47 @@
-﻿@{
+﻿@model WebBomba.Models.Category.CategoryAddViewModel
+
+@{
     Layout = "_SiteLayout";
+    ViewData["Title"] = "Add";
 }
 
-<h1 class="text-center">Додати категорію</h1>
-<ul class="text-danger">
-    @Html.ValidationSummary(false)
-</ul>
-<form action="/Category/Add" method="post" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label for="name" class="form-label">Назва</label>
-        <input type="text" class="form-control" id="name" name="name">
+<h1>Додати категорію</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Add" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <input asp-for="Image" class="form-control"/>
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">Опис</label>
-        <input type="text" class="form-control" id="description" name="description">
-    </div>
-    <div class="mb-3">
-        <label for="image" class="form-label">Фото</label>
-        <input type="file" class="form-control" id="image" name="image">
-    </div>
-    <button type="submit" class="btn btn-primary">Додати</button>
-</form>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутися назад</a>
+</div>
+
+@* @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@
