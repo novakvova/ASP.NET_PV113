@@ -1,7 +1,6 @@
 ﻿@model WebBomba.Models.Category.CategoryAddViewModel
 
 @{
-    Layout = "_SiteLayout";
     ViewData["Title"] = "Add";
 }
 
@@ -27,7 +26,16 @@
             
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control"/>
+                <br />
+                <label for="Image">
+                    <img src="/img/upload.png" 
+                        id="selectImage" 
+                        alt="обрати фото" 
+                        width="200" 
+                        style="cursor:pointer" />
+                </label>
+                
+                <input asp-for="Image" class="form-control d-none"/>
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
 
@@ -42,6 +50,16 @@
     <a asp-action="Index">Повернутися назад</a>
 </div>
 
-@* @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} *@
+@section Scripts {
+    <script>
+        let image = document.getElementById("Image");
+        image.addEventListener("change", function (e) {
+            let file = e.target.files[0];
+            if (file) {
+                document.getElementById("selectImage").src = URL.createObjectURL(file);
+                //console.log("Ви обрали файл: ", file);
+            }
+        });
+    </script>
+   @*  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+}

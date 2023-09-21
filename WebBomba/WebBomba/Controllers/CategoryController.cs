@@ -41,32 +41,45 @@ namespace WebBomba.Controllers
         [HttpPost]
         public IActionResult Add(CategoryAddViewModel model)
         {
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            if (!ModelState.IsValid)
+            try
             {
+                if (model.Image == null)
+                {
+                    ModelState.AddModelError("Image", "Оберіть фото!");
+                }
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
+
+                string imageName = _imageWorker.ImageSave(model.Image);
+
+                CategoryEntity entity = new CategoryEntity();
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Image = imageName;
+                _dataEFContext.Categories.Add(entity);
+                _dataEFContext.SaveChanges();
+                stopWatch.Stop();
+                // Get the elapsed time as a TimeSpan value.
+                TimeSpan ts = stopWatch.Elapsed;
+
+                // Format and display the TimeSpan value.
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                    ts.Hours, ts.Minutes, ts.Seconds,
+                    ts.Milliseconds / 10);
+                Console.WriteLine("-----------RunTime---------" + elapsedTime);
+                //вертає статус код 302 - потрібно перейти до списку категорій
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Щось пішло не так " + ex.Message);
                 return View();
             }
-
-            string imageName = _imageWorker.ImageSave(model.Image);
-
-            CategoryEntity entity = new CategoryEntity();
-            entity.Name = model.Name;
-            entity.Description = model.Description;
-            entity.Image = imageName;
-            _dataEFContext.Categories.Add(entity);
-            _dataEFContext.SaveChanges();
-            stopWatch.Stop();
-            // Get the elapsed time as a TimeSpan value.
-            TimeSpan ts = stopWatch.Elapsed;
-
-            // Format and display the TimeSpan value.
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                ts.Hours, ts.Minutes, ts.Seconds,
-                ts.Milliseconds / 10);
-            Console.WriteLine("-----------RunTime---------" + elapsedTime);
-            //вертає статус код 302 - потрібно перейти до списку категорій
-            return RedirectToAction(nameof(Index));
+           
         }
     }
 }
