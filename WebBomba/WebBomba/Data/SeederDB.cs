@@ -36,6 +36,8 @@ namespace WebBomba.Data
                     context.Categories.Add(c2);
                     context.SaveChanges();
                 }
+            
+            
             }
         }
     }
