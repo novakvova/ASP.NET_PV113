@@ -12,10 +12,15 @@ namespace WebBomba.Controllers
     {
         private readonly DataEFContext _dataEFContext;
         private readonly IImageWorker _imageWorker;
-        public CategoryController(DataEFContext dataEFContext, IImageWorker imageWorker)
+        private readonly IConfiguration _configuration;
+        public CategoryController(DataEFContext dataEFContext, 
+            IImageWorker imageWorker, 
+            IConfiguration configuration)
         {
             _dataEFContext = dataEFContext;
             _imageWorker = imageWorker;
+            _configuration = configuration;
+
         }
         //private static List<CategoryViewModel> list = new List<CategoryViewModel>();
         public IActionResult Index()
@@ -81,5 +86,56 @@ namespace WebBomba.Controllers
             }
            
         }
+
+        //Метод використовуєть для відображення сторінки, де ми заповняємо інфомацію
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var editProduct = _dataEFContext.Categories.SingleOrDefault(x => x.Id == id);
+            if (editProduct == null)
+            {
+                return NotFound();
+            }
+            var model = new CategoryEditViewModel
+            {
+                Id = id,
+                Name = editProduct.Name,
+                Description = editProduct.Description,
+                ImageView = "/images/300_" + editProduct.Image
+            };
+            return View(model);
+        }
+
+        //Метод використовуєть для відображення сторінки, де ми заповняємо інфомацію
+        [HttpPost]
+        public IActionResult Edit(CategoryEditViewModel model)
+        {
+            var category = _dataEFContext.Categories.SingleOrDefault(x => x.Id == model.Id);
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            if(model.Image != null)
+            {
+                //видаляю старі фото
+                var imageSizes = _configuration.GetValue<string>("ImageSizes");
+                var sizes = imageSizes.Split(",");
+                foreach (var size in sizes)
+                {
+                    int width = int.Parse(size);
+                    var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                    System.IO.File.Delete(Path.Combine(dir, size + "_" + category.Image));
+                }
+                //зберігаємо нове фото
+                string imageName = _imageWorker.ImageSave(model.Image);
+                category.Image = imageName;
+            }
+            category.Name= model.Name;
+            category.Description= model.Description;
+            _dataEFContext.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
