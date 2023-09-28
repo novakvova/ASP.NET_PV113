@@ -3,17 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebBomba.Data.Entities
 {
-    [Table("tblCategories")]
-    public class CategoryEntity
+    [Table("tblProducts")]
+    public class ProductEntity
     {
         [Key]
         public int Id { get; set; }
         [Required, StringLength(500)]
         public string Name { get; set; }
-        [StringLength(4000)]
+        [Required, StringLength(4000)]
         public string Description { get; set; }
-        [StringLength(200)]
-        public string Image { get; set; }
-        public ICollection<ProductEntity> Products { get; set; }
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+        public CategoryEntity Category { get; set; }
+        public ICollection<ProductImageEntity> ProductImages { get; set; }
     }
 }

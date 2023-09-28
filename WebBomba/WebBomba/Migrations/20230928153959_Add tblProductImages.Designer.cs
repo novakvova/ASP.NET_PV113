@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBomba.Data;
 
@@ -10,9 +11,11 @@ using WebBomba.Data;
 namespace WebBomba.Migrations
 {
     [DbContext(typeof(DataEFContext))]
-    partial class DataEFContextModelSnapshot : ModelSnapshot
+    [Migration("20230928153959_Add tblProductImages")]
+    partial class AddtblProductImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

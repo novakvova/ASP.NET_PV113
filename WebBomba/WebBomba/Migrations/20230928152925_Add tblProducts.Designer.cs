@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBomba.Data;
 
@@ -10,9 +11,11 @@ using WebBomba.Data;
 namespace WebBomba.Migrations
 {
     [DbContext(typeof(DataEFContext))]
-    partial class DataEFContextModelSnapshot : ModelSnapshot
+    [Migration("20230928152925_Add tblProducts")]
+    partial class AddtblProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,32 +78,6 @@ namespace WebBomba.Migrations
                     b.ToTable("tblProducts");
                 });
 
-            modelBuilder.Entity("WebBomba.Data.Entities.ProductImageEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Priotity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("tblProductImages");
-                });
-
             modelBuilder.Entity("WebBomba.Data.Entities.ProductEntity", b =>
                 {
                     b.HasOne("WebBomba.Data.Entities.CategoryEntity", "Category")
@@ -112,25 +89,9 @@ namespace WebBomba.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("WebBomba.Data.Entities.ProductImageEntity", b =>
-                {
-                    b.HasOne("WebBomba.Data.Entities.ProductEntity", "Product")
-                        .WithMany("ProductImages")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("WebBomba.Data.Entities.CategoryEntity", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("WebBomba.Data.Entities.ProductEntity", b =>
-                {
-                    b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618
         }
