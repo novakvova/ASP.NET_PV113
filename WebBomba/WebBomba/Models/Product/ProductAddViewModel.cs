@@ -19,10 +19,9 @@ namespace WebBomba.Models.Product
             public int CategoryId { get; set; }
 
             [Display(Name = "Фото")]
-            [DataType(DataType.Upload)]
-            public IFormFileCollection Images { get; set; }
+            public ICollection<IFormFile> Photos { get; set; }
 
-            //список усіх категорій, які відобрається для продукта
-            public SelectList CategoryList { get; set; }
+        //список усіх категорій, які відобрається для продукта
+        public SelectList CategoryList { get; set; }
     }
 }

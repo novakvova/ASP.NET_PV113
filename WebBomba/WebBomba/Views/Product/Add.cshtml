@@ -31,10 +31,10 @@
 
             <div class="form-group mt-3 mb-3">
                 <p class="text-primary text-center">Завантажити фото:</p>
-                <label for="Images">
+                <label id="selectImages">
                     <img class="img_upload" src="/img/input.png" width="120" alt="обрати фото" style="cursor:pointer" />
                 </label>
-                <input asp-for="Images" multiple class="form-control d-none" onchange="handleFileSelect(event)" />
+                <input type="file" id="images" multiple class="form-control d-none"  />
                 <div class="mt-3 d-flex justify-content-evenly flex-wrap" id="imageContainer"></div>
             </div>
 
@@ -52,43 +52,66 @@
 
 @section Scripts {
     <script>
+
+        let id = 0;
+        const imageContainer = document.getElementById('imageContainer');
+
+        let selectImages = document.getElementById("selectImages");
+        selectImages.addEventListener("click", function () {
+            //Генеруємо id для фото
+            id = generateUniqueId();
+            var fileItem = document.createElement('input');
+            fileItem.type = 'file';
+            fileItem.classList.add('d-none')
+            fileItem.onchange = handleFileSelect;
+            fileItem.name = "photos";
+            fileItem.id = id;
+            imageContainer.appendChild(fileItem);
+            fileItem.click();
+        });
         function handleFileSelect(event) {
             const fileInput = event.target;
 
             if (fileInput.files.length > 0) {
 
-                const imageContainer = document.getElementById('imageContainer');
-
-                while (imageContainer.firstChild) {
-                    imageContainer.removeChild(imageContainer.firstChild);
-                }
-
                 const imgContainer = document.createElement('div');
+                imgContainer.dataset.id = id; //зберігаю id input
+
                 imgContainer.classList.add('img_container');
 
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    const file = fileInput.files[i];
+                const file = fileInput.files[0];
 
-                    const imgContainer = document.createElement('div');
-                    imgContainer.classList.add('img_container');
+                const imgElement = document.createElement('img');
+                imgElement.classList.add('img_preview');
+                imgElement.src = URL.createObjectURL(file);
 
-                    const imgElement = document.createElement('img');
-                    imgElement.classList.add('img_preview');
-                    imgElement.src = URL.createObjectURL(file);
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = 'X';
+                deleteButton.classList.add('img_preview-delete');
+                deleteButton.type = 'button';
+                deleteButton.addEventListener('click', function () {
+                    console.log("file input id ", imgContainer.dataset.id);
+                    document.getElementById(imgContainer.dataset.id).remove(); //видаляю також сам input file
+                    imageContainer.removeChild(imgContainer); //видаляємо сам контейр для однієї фото
+                });
+                imgContainer.appendChild(imgElement);
+                imgContainer.appendChild(deleteButton);
+                imageContainer.appendChild(imgContainer);
 
-                    const deleteButton = document.createElement('button');
-                    deleteButton.innerText = 'X';
-                    deleteButton.classList.add('img_preview-delete');
-                    deleteButton.type = 'button';
-                    deleteButton.addEventListener('click', function () {
-                        imageContainer.removeChild(imgContainer);
-                    });
-
-                    imgContainer.appendChild(imgElement);
-                    imgContainer.appendChild(deleteButton);
-                    imageContainer.appendChild(imgContainer);
-                }
             }
+        }
+
+        function generateUniqueId() {
+            // Create a timestamp-based part of the ID
+            const timestampPart = new Date().getTime().toString(16);
+
+            // Create a random number part of the ID
+            const randomPart = Math.floor(Math.random() * 1000000).toString(16);
+
+            // Concatenate the two parts to create a unique ID
+            const uniqueId = timestampPart + randomPart;
+
+            return uniqueId;
         }
     </script>
 }
