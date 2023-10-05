@@ -21,15 +21,15 @@ namespace WebBomba.Controllers
             _imageWorker = imageWorker;
         }
 
-        public IActionResult Index(int itemId)
+        public IActionResult Index()
         {
             var categoryList = new ProductListViewModel();
-            categoryList.CategoryId = itemId;
-            categoryList.CategoryName = _dataEFContext.Categories.Where(p => p.Id == itemId).FirstOrDefault().Name;
+           // categoryList.CategoryId = itemId;
+            //categoryList.CategoryName = _dataEFContext.Categories.Where(p => p.Id == itemId).FirstOrDefault().Name;
             categoryList.Products = _dataEFContext.Products
                     .Include(x => x.Category)
                     .Include(x => x.ProductImages)
-                    .Where(p => p.CategoryId == itemId)
+                   // .Where(p => p.CategoryId == itemId)
                     .Select(x => new ProductViewModel
                     {
                         Id = x.Id,
