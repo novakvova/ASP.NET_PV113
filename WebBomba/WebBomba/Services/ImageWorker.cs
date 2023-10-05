@@ -64,5 +64,22 @@ namespace WebBomba.Services
             }
             return imageName;
         }
+
+        public void RemoveImage(string name)
+        {
+            var imageSizes = _configuration.GetValue<string>("ImageSizes");
+            var sizes = imageSizes.Split(",");
+            string baseImagePath = name;
+
+            foreach (var size in sizes)
+            {
+                string imagePathToDelete = Path.Combine(Directory.GetCurrentDirectory(), "images", size + "_" + baseImagePath);
+
+                if (File.Exists(imagePathToDelete))
+                {
+                    File.Delete(imagePathToDelete);
+                }
+            }
+        }
     }
 }

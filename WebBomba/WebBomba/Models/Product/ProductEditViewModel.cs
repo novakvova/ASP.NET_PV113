@@ -25,10 +25,21 @@ namespace WebBomba.Models.Product
         [Required(ErrorMessage = "Поле 'Кількість' є обов'язковим.")]
         public int StockQuantity { get; set; }
 
-        public ICollection<string> Images { get; set; }
+        // Фотографії, які вже існують для продукта
+        public List<ProductImageViewModel> ExistingPhotos { get; set; }
 
         [Required(ErrorMessage = "Поле 'Фото' є обов'язковим.")]
-        public ICollection<IFormFile> Photos { get; set; }
+        public ICollection<IFormFile> NewPhotos { get; set; }
         public SelectList CategoryList { get; set; }
+
+        [Display(Name = "Видалити фото")]
+        public List<int> DeletedPhotoIds { get; set; }
+    }
+
+    public class ProductImageViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Priority { get; set; }
     }
 }

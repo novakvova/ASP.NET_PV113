@@ -107,7 +107,12 @@ namespace WebBomba.Controllers
 
             var images = _dataEFContext.ProductImages
                 .Where(c => c.ProductId == id)
-                .Select(x => $"/images/1200_{x.Name}")
+                .Select(pi => new ProductImageViewModel
+                {
+                    Id = pi.Id,
+                    Name = "/images/300_" + pi.Name,
+                    Priority = pi.Priotity
+                })
                 .ToList();
 
             var model = new ProductEditViewModel
@@ -116,10 +121,11 @@ namespace WebBomba.Controllers
                 Name = editProduct.Name,
                 CategoryId = editProduct.CategoryId,
                 CategoryList = new SelectList(categories, "Value", "Text"),
-                Images = images
+                ExistingPhotos = images
             };
 
-            SelectListItem selectedCategory = model.CategoryList.FirstOrDefault(x => x.Value == editProduct.CategoryId.ToString());
+            SelectListItem selectedCategory = model.CategoryList
+                .FirstOrDefault(x => x.Value == editProduct.CategoryId.ToString());
 
             if (selectedCategory != null)
             {
@@ -128,6 +134,82 @@ namespace WebBomba.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public IActionResult Edit(ProductEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var categories = _dataEFContext.Categories
+                    .Select(x => new { Value = x.Id, Text = x.Name })
+                    .ToList();
+
+                model.CategoryList = new SelectList(categories, "Value", "Text");
+
+                var selectedCategory = model.CategoryList.FirstOrDefault(x => x.Value == model.CategoryId.ToString());
+
+                if (selectedCategory != null)
+                {
+                    selectedCategory.Selected = true;
+                }
+
+                var img = _dataEFContext.ProductImages
+                        .Where(c => c.ProductId == model.Id)
+                        .Select(pi => new ProductImageViewModel
+                        {
+                            Id = pi.Id,
+                            Name = "/images/300_" + pi.Name,
+                            Priority = pi.Priotity
+                        })
+                        .ToList();
+
+                model.ExistingPhotos = img ?? new List<ProductImageViewModel>();
+
+                return View(model);
+            }
+
+            var editProduct = _dataEFContext.Products.FirstOrDefault(x => x.Id == model.Id);
+
+            if (editProduct == null)
+            {
+                return NotFound(); // Обробка відсутності продукту з вказаним ID
+            }
+
+
+            // Обробіть видалення фотографій
+            if (model.DeletedPhotoIds != null)
+            {
+                foreach (var photoId in model.DeletedPhotoIds)
+                {
+                    var photoToDelete = _dataEFContext.ProductImages.FirstOrDefault(p => p.Id == photoId);
+                    if (photoToDelete != null)
+                    {
+                        _imageWorker.RemoveImage(photoToDelete.Name);
+                        // Видаліть фотографію з бази даних
+                        _dataEFContext.ProductImages.Remove(photoToDelete);
+                    }
+                }
+            }
+
+            _dataEFContext.SaveChanges();
+
+            editProduct.Name = model.Name;
+            editProduct.CategoryId = model.CategoryId;
+
+            foreach (var image in model.NewPhotos)
+            {
+                _dataEFContext.ProductImages.Add(new ProductImageEntity
+                {
+                    ProductId = editProduct.Id,
+                    Name = _imageWorker.ImageSave(image)
+                });
+            }
+
+            _dataEFContext.SaveChanges();
+
+            return RedirectToAction("Index", new { itemId = editProduct.CategoryId });
+        }
+
 
     }
 }
