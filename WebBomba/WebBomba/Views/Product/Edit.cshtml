@@ -1,0 +1,154 @@
+﻿@model WebBomba.Models.Product.ProductEditViewModel
+
+@{
+    ViewData["Title"] = "Редагувать";
+}
+
+<div class="container">
+    <h1 class="mt-5 pt-3 fs-5 text-info text-center">Редагувати товар:</h1>
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-md-4" >
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control mb-3" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CategoryId">Category</label>
+                    <select asp-for="CategoryId" asp-items="@Model.CategoryList" class="form-select mb-3"></select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="w-100 border bg-info d-flex align-items-center justify-content-center" style="cursor:pointer" for="addImage">
+                        <p class="text-light h4 mb-0">Обрати зображення:</p>
+                    </label>
+                    <input id="addImage" type="file" class="d-none" onchange="handleFileSelect(event)" />
+
+                    <div id="productImages" class="d-flex justify-content-evenly">
+                        @foreach (var image in Model.Images)
+                        {
+                            <div id="@image" class="m-3 position-relative">
+                                <img class="img__edit" src="@image" alt="photo" />
+                                <button type="button" class="img_preview-delete" onclick="removeImage('@image')">X</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <div class="form-group mt-3 w-100 d-inline-flex justify-content-center">
+                    <input type="button" onclick="selectImage()" value="Зберегти зміни" class="btn btn-primary" />
+					<input id="submitInput" type="submit" value="Зберегти зміни" class="btn btn-primary d-none" />
+				</div>
+            </form>
+		</div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function selectImage() {
+            var productImagesDiv = document.getElementById('productImages');
+            var images = document.getElementsByTagName('img');
+
+            var fetchPromises = [];
+
+            for (let i = 0; i < images.length; i++) {
+                var image = images[i];
+                var imageUrl = image.src;
+
+                console.log(imageUrl);
+
+                var fetchPromise = fetch(imageUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        var file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+
+                        var dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.classList.add('d-none');
+                        fileInput.name = "Photos";
+
+                        fileInput.files = dataTransfer.files;
+
+                        productImagesDiv.appendChild(fileInput);
+                    });
+
+                fetchPromises.push(fetchPromise);
+            }
+
+            Promise.all(fetchPromises)
+                .then(() => {
+                    var submitInput = document.getElementById("submitInput");
+                    submitInput.click();
+                })
+                .catch(error => {
+                    console.error('Error fetching images:', error);
+                });
+        }
+
+        function removeImage(imageId) {
+            var elementToRemove = document.getElementById(imageId);
+            if (elementToRemove) {
+                elementToRemove.parentNode.removeChild(elementToRemove);
+            }
+        }
+
+        function handleFileSelect(event) {
+            var files = event.target.files;
+            var productImagesDiv = document.getElementById('productImages');
+
+            if (files.length > 0) {
+                var file = files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = document.createElement('img');
+                    img.alt = "photo";
+                    img.className = "img__edit";
+                    img.src = e.target.result;
+                    
+                    var divImage = document.createElement('div');
+                    divImage.className = "m-3 position-relative"
+                    divImage.id = generateUniqueId();
+
+                    var deleteButton = document.createElement('button');
+                    deleteButton.type = "button";
+                    deleteButton.className = "img_preview-delete";
+                    deleteButton.textContent = "X";
+                    deleteButton.onclick = function () {
+                        removeImage(divImage.id);
+                    };
+                    
+                    divImage.appendChild(img)
+                    divImage.appendChild(deleteButton)
+
+                    productImagesDiv.appendChild(divImage);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function generateUniqueId() {
+            const timestampPart = new Date().getTime().toString(16);
+            const randomPart = Math.floor(Math.random() * 1000000).toString(16);
+            const uniqueId = timestampPart + randomPart;
+
+            return uniqueId;
+        }
+    </script>
+}
+
+
+
+

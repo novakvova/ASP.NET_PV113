@@ -21,7 +21,11 @@
                 <td>
                     <img src="/images/150_@item.Image" alt="" />
                 </td>
-                <td>@item.Name</td>
+                <td>
+                    @item.Name
+                    @*products*@
+                    <a class="btn btn-success me-2" href="/Product/Index?itemId=@item.Id">Товари</a>
+                </td>
                 <td>@item.Description</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">Змінить</a>
