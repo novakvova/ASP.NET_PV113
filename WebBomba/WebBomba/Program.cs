@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using System;
 using WebBomba.Data;
+using WebBomba.Data.Entities.Identity;
 using WebBomba.Interfaces;
 using WebBomba.Services;
 
@@ -12,6 +15,24 @@ builder.Services.AddScoped<IImageWorker, ImageWorker>();
 
 builder.Services.AddDbContext<DataEFContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection")));
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
+{
+    options.Stores.MaxLengthForKeys = 128;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 5;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+                .AddEntityFrameworkStores<DataEFContext>()
+                .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -37,6 +58,8 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 
 //Налаштуваня маршрутизації - якою адресою в url - ми отрмуємо доступ до методів контролера
