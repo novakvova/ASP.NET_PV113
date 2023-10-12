@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBomba.Data;
 
@@ -11,9 +12,11 @@ using WebBomba.Data;
 namespace WebBomba.Migrations
 {
     [DbContext(typeof(DataEFContext))]
-    partial class DataEFContextModelSnapshot : ModelSnapshot
+    [Migration("20231012155630_Add tblIdentity")]
+    partial class AddtblIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
