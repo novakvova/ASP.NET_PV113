@@ -1,0 +1,11 @@
+﻿@model WebBomba.Models.Account.UserLinkViewModel
+
+<li class="nav-item">
+    <a class="nav-link" asp-action="Profile" asp-controller="Account">
+        
+        <img alt="user image"
+             src="/images/50_@Model.Image"
+             style="height: 32px !important; width: 32px !important;"/>
+        @Model.Name
+    </a>
+</li>
