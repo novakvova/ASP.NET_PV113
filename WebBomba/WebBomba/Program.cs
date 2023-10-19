@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System;
+using NETCore.MailKit.Core;
 using WebBomba.Data;
 using WebBomba.Data.Entities.Identity;
 using WebBomba.Interfaces;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IImageWorker, ImageWorker>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddDbContext<DataEFContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MSSQLConnection")));
@@ -30,6 +32,8 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
+    
+    options.SignIn.RequireConfirmedEmail = true;
 })
                 .AddEntityFrameworkStores<DataEFContext>()
                 .AddDefaultTokenProviders();
@@ -62,14 +66,14 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//Налаштуваня маршрутизації - якою адресою в url - ми отрмуємо доступ до методів контролера
-//http://localhost:5890 - корінь сайту - головна сторінка - /
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ url - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//http://localhost:5890 - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - /
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Category}/{action=Index}/{id?}");
 
-//Початкова ініціалізація Бази даних
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 app.SeedData();
 
 app.Run();

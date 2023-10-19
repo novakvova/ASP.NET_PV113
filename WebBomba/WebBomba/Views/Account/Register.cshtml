@@ -1,0 +1,75 @@
+﻿@model WebBomba.Models.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Реєстрація на сайті";
+}
+
+<h1 class="text-center">Реєстрація на сайті</h1>
+
+
+<div class="row">
+    <div class="offset-md-3 col-md-6">
+        <form asp-action="Register" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mt-2">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control"/>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control"/>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <br/>
+                <label for="Image">
+                    <img src="/img/upload.png"
+                         id="selectImage"
+                         alt="обрати фото"
+                         width="200"
+                         style="cursor:pointer"/>
+                </label>
+                @*<input asp-for="Image" type="file" id="Image" class="form-control d-none" />*@
+                <input asp-for="Image" type="file" class="form-control d-none"/>
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control"/>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <input type="submit" value="Реєстарція" class="btn btn-primary"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let image = document.getElementById("Image");
+        image.addEventListener("change", function (e) {
+            let file = e.target.files[0];
+            if (file) {
+                document.getElementById("selectImage").src = URL.createObjectURL(file);
+            }
+        });
+</script>
+}
