@@ -1,0 +1,6 @@
+docker build -t pv113_image .
+
+docker run -it --rm -p 5962:80 --name pv113_container pv113_image
+
+docker run -d --restart=always -p 5962:80 --name pv113_container pv113_image
+
