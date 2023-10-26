@@ -69,9 +69,17 @@ app.UseAuthorization();
 //����������� ������������� - ���� ������� � url - �� ������� ������ �� ������ ����������
 //http://localhost:5890 - ����� ����� - ������� ������� - /
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Category}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapAreaControllerRoute(
+        name: "admin_area",
+        areaName: "Admin",
+        pattern: "admin/{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Category}/{action=Index}/{id?}");
+});
 
 //��������� ����������� ���� �����
 app.SeedData();
