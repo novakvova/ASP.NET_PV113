@@ -4,10 +4,13 @@ using WebBomba.Data.Entities;
 using WebBomba.Data;
 using WebBomba.Interfaces;
 using WebBomba.Areas.Admin.Models.Category;
+using Microsoft.AspNetCore.Authorization;
+using WebBomba.Constants;
 
 namespace WebBomba.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = Roles.Admin)]
     public class CategoryController : Controller
     {
         private readonly DataEFContext _dataEFContext;
