@@ -2,51 +2,23 @@
 @model List<CategoryViewModel>
 
 <h1 class="text-center">Категорії</h1>
-<a href="/Category/Add" class="btn btn-success">Додати</a>
-@*products*@
-<a class="btn btn-success me-2" href="/Product/Index">Товари</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Фото</th>
-            <th scope="col">Назва</th>
-            <th scope="col">Опис</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <th scope="row">@item.Id</th>
-                <td>
-                    <img src="/images/150_@item.Image" alt="" />
-                </td>
-                <td>
-                    @item.Name
-                    
-                </td>
-                <td>@item.Description</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">Змінить</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Видалить</a>
-                    <button class="btn btn-success"
-                            data-bs-toggle="modal"
-                            data-bs-target="#deleteModal">
-                        Відкрити модалку
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-@await Html.PartialAsync("_ModalDelete")
 
-@section Scripts {
-    <script>
-        
-    </script>
-    @*  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
-}
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            <div class="card">
+                <img src="/images/150_@item.Image" class="card-img-top"
+                     alt="Hollywood Sign on The Hill" />
+                <div class="card-body">
+                    <h5 class="card-title"> @item.Name</h5>
+                    <p class="card-text">
+                        @item.Description
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

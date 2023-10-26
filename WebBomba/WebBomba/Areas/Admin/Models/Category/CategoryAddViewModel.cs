@@ -1,16 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebBomba.Models.Category
+namespace WebBomba.Areas.Admin.Models.Category
 {
     public class CategoryAddViewModel
     {
-        [Display(Name="Назва")]
+        [Display(Name = "Назва")]
         [Required(ErrorMessage = "Вкажіть назву категорії")]
         public string Name { get; set; }
-        [Display(Name="Опис")]
+        [Display(Name = "Опис")]
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
-        [Display(Name="Фото")]
+        [Display(Name = "Фото")]
         [DataType(DataType.Upload)]
         public IFormFile Image { get; set; }
     }

@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebBomba.Models.Category
+namespace WebBomba.Areas.Admin.Models.Category
 {
     public class CategoryEditViewModel
     {
         public int Id { get; set; }
-        [Display(Name="Назва")]
+        [Display(Name = "Назва")]
         [Required(ErrorMessage = "Вкажіть назву категорії")]
         public string Name { get; set; }
-        [Display(Name="Опис")]
+        [Display(Name = "Опис")]
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
         /// <summary>
@@ -18,7 +18,7 @@ namespace WebBomba.Models.Category
         /// <summary>
         /// якщо користувач хоче змінить фото
         /// </summary>
-        [Display(Name="Фото")]
+        [Display(Name = "Фото")]
         [DataType(DataType.Upload)]
         public IFormFile Image { get; set; }
     }
