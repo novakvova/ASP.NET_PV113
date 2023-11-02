@@ -1,0 +1,25 @@
+version: "3.9"
+networks:
+    myAppNetwork: 
+
+services:
+  SqlServerDb:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+        - 8002:1433
+    environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=myStong_Password123# 
+
+  app:
+    container_name: WebBobmaConatiner
+    build:
+      context: .
+      dockerfile: WebBomba/Dockerfile
+    ports:
+        - 8001:80 
+    depends_on:
+      - SqlServerDb
+
+
