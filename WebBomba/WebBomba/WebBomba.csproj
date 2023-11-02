@@ -16,6 +16,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.9" />
     <PackageReference Include="NETCore.MailKit" Version="2.0.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+
+	  <Content Include="images\**">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 </Project>

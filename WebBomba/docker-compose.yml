@@ -1,25 +1,36 @@
 version: "3.9"
 networks:
-    myAppNetwork: 
+  myAppNetwork:
+    driver: bridge
 
 services:
-  SqlServerDb:
-    container_name: SqlServerContainer
-    image: mcr.microsoft.com/mssql/server:2019-latest
+  sqlServerDb:
+    container_name: catMSSQL
+    image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
-        - 8002:1433
+      - "8002:1433"
     environment:
-        - ACCEPT_EULA=Y
-        - MSSQL_SA_PASSWORD=myStong_Password123# 
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=myStong_Password123#
+    networks:
+      - myAppNetwork
+    volumes:
+      - msvol:/var/opt/mssql  # Use the volume name msvol here
 
   app:
-    container_name: WebBobmaConatiner
+    container_name: catMan
     build:
       context: .
-      dockerfile: WebBomba/Dockerfile
+      dockerfile: Dockerfile
     ports:
-        - 8001:80 
+      - "8001:80"
+    networks:
+      - myAppNetwork
     depends_on:
-      - SqlServerDb
+      - sqlServerDb
+    volumes:
+      - appvol:/app/images  # Use the volume name appvol here
 
-
+volumes:
+  msvol:
+  appvol:

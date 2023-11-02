@@ -70,7 +70,8 @@ namespace WebBomba.Data
                         LastName = "Підкаблучник",
                         Email = "admin@gmail.com",
                         UserName = "admin@gmail.com",
-                        Image = "admin.webp"
+                        Image = "admin.webp",
+                        EmailConfirmed = true,
                     };
                     var result = userManager.CreateAsync(user, "123456").Result; 
                     if (!result.Succeeded) 
