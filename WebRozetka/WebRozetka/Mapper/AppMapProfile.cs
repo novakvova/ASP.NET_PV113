@@ -8,6 +8,7 @@ namespace WebRozetka.Mapper
     {
         public AppMapProfile()
         {
+            CreateMap<CategoryEntity, CategoryItemViewModel>();
             CreateMap<CategoryCreateViewModel, CategoryEntity>();
         }
     }

@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using WebRozetka.Data;
 using WebRozetka.Mapper;
 
@@ -24,6 +25,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+
+if (!Directory.Exists(dir))
+{
+    Directory.CreateDirectory(dir);
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(dir),
+    RequestPath = "/images"
+});
 
 app.UseAuthorization();
 
