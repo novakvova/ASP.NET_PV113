@@ -8,3 +8,11 @@ docker compose build
 
 docker compose up -d
 
+docker stop catMan
+docker rm catMan
+
+docker stop catMSSQL
+docker rm catMSSQL
+
+docker rmi catMSSQL
+

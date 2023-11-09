@@ -30,6 +30,10 @@ services:
       - sqlServerDb
     volumes:
       - appvol:/app/images  # Use the volume name appvol here
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
 
 volumes:
   msvol:
