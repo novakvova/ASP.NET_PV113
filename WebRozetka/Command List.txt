@@ -1,0 +1,16 @@
+-----Hosting Ubuntu-----
+docker build -t rozetka_image .
+docker run -d --restart=always -v /var/www/rozetka.itstep.click/images:/app/images --name rozetka_container -p 3902:80 rozetka_image
+
+--------------------------------
+docker ps -l
+docker images --all
+
+docker ps -a
+
+docker stop rozetka_container
+docker rm rozetka_container
+
+docker rmi rozetka_image
+
+
