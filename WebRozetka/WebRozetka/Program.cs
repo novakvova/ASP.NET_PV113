@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using WebRozetka.Data;
 using WebRozetka.Mapper;
 
@@ -15,9 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors();
+
 builder.Services.AddAutoMapper(typeof(AppMapProfile));
 
 var app = builder.Build();
+
+app.UseCors(options =>
+    options.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
