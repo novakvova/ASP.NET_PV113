@@ -20,11 +20,11 @@ builder.Services.AddAutoMapper(typeof(AppMapProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
 
