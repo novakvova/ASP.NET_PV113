@@ -13,4 +13,8 @@ docker rm rozetka_container
 
 docker rmi rozetka_image
 
+-----Запуск через compose------
+docker-compose up --build -d
+docker compose down
+
 

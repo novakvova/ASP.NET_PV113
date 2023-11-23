@@ -1,0 +1,41 @@
+version: "3.9"
+networks:
+  myAppNetwork:
+    driver: bridge
+
+services:
+  sqlPostgresDb:
+    container_name: postgresPV113
+    image: postgres:16.1
+    ports:
+      - "5113:5432"
+    environment:
+      - POSTGRES_USER=userpv113
+      - POSTGRES_PASSWORD=myStong_Pdk%dki934kIsassword123#
+      - POSTGRES_DB=dbpv113
+    networks:
+      - myAppNetwork
+    volumes:
+      - d:/web/pv113/postgresql:/var/lib/postgresql/data  # Use the volume name msvol here
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  app:
+    container_name: web_api_pv113
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5018:80"
+    networks:
+      - myAppNetwork
+    depends_on:
+      - sqlPostgresDb
+    volumes:
+      - d:/web/pv113/images:/app/images  # Use the volume name appvol here
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
