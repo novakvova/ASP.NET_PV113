@@ -13,7 +13,10 @@ namespace WebRozetka.Validators
             _appEFContext = appEFContext;
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Поле назва є обов'язковим!")
-                .Must(BeUniqueName).WithMessage("Така категорія уже є!");
+                .DependentRules(() =>
+                {
+                    RuleFor(x => x.Name).Must(BeUniqueName).WithMessage("Така категорія уже є!");
+                });
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Поле опис є обов'язковим!");
             RuleFor(x => x.Image)
