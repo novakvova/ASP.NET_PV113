@@ -44,5 +44,59 @@ namespace WebRozetka.Controllers
             await _appEFContext.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromForm] CategoryEditViewModel model)
+        {
+            var cat = _appEFContext.Categories
+                .Where(c => !c.IsDeleted)
+                .SingleOrDefault(x=>x.Id==model.Id);
+            if (cat == null)
+            {
+                return NotFound();
+            }
+
+            if (model.Image != null)
+            {
+                string fileRemove = Path.Combine(Directory.GetCurrentDirectory(),"images",cat.Image);
+                if(System.IO.File.Exists(fileRemove))
+                {
+                    System.IO.File.Delete(fileRemove);
+                }
+                cat.Image = await ImageWorker.SaveImageAsync(model.Image);
+            }
+            cat.Name=model.Name;
+            cat.Description=model.Description;
+            await _appEFContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var cat = _appEFContext.Categories
+                .Where(c => !c.IsDeleted)
+                .SingleOrDefault(x => x.Id == id);
+            if (cat == null)
+            {
+                return NotFound();
+            }
+            cat.IsDeleted = true;
+            await _appEFContext.SaveChangesAsync();
+            return Ok();
+        }
+       
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var cat = await _appEFContext.Categories
+                .Where(c => !c.IsDeleted)
+                .SingleOrDefaultAsync(x => x.Id == id);
+            if (cat == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<CategoryItemViewModel>(cat));
+        }
     }
 }
