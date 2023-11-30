@@ -29,7 +29,6 @@ namespace WebRozetka.Controllers
                 .Where(c => !c.IsDeleted)
                 .Select(x=>_mapper.Map<CategoryItemViewModel>(x))
                 .ToListAsync();
-
             return Ok(list);
         }
 
