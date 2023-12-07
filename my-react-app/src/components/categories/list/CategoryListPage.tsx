@@ -1,10 +1,10 @@
-import {Button, Card, Col, Row} from "antd";
+import {Button, Card, Col, Popconfirm, Row} from "antd";
 import {useEffect, useState} from "react";
 import {ICategoryItem} from "../../../interfaces/categories";
 import http_common from "../../../http_common.ts";
 import {APP_ENV} from "../../../env";
 import {Link, useNavigate} from "react-router-dom";
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, EllipsisOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 
 const CategoryListPage = () => {
@@ -25,6 +25,10 @@ const CategoryListPage = () => {
             });
     }, []);
 
+    const handleDeleteCategory = (id: number) => {
+        console.log("delete id", id);
+    }
+
     const content = list.map(x => (
         <Col key={x.id} span={6}>
             <Card
@@ -33,7 +37,17 @@ const CategoryListPage = () => {
                 cover={<img alt="example" src={`${APP_ENV.BASE_URL}/images/${x.image}`} />}
 
                 actions={[
-                    <SettingOutlined key="setting" />,
+                    <Popconfirm
+                        title="Видалення категорії"
+                        description="Підтвердити видалення категорії?"
+                        icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                        cancelText="Ні"
+                        okText="Так"
+                        onConfirm={()=>handleDeleteCategory(x.id)}
+                    >
+                        <DeleteOutlined key="delete" style={{ color: 'red' }}/>
+                    </Popconfirm>,
+
                     <EditOutlined key="edit" onClick={() => {
                         navigate(`/edit/${x.id}`);
                         console.log("OnClick edit", x.id);
