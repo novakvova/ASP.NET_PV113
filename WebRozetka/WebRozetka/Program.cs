@@ -1,11 +1,16 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebRozetka.Data;
 using WebRozetka.Data.Entities.Identity;
+using WebRozetka.Interfaces;
 using WebRozetka.Mapper;
+using WebRozetka.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +29,27 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 })
     .AddEntityFrameworkStores<AppEFContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+var singinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<String>("JwtSecretKey"))); 
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters()
+    {
+        IssuerSigningKey = singinKey,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey=true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,6 +89,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/images"
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
