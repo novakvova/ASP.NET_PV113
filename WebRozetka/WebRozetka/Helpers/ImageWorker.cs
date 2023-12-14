@@ -14,6 +14,15 @@ namespace WebRozetka.Helpers
             }
         }
 
+        public static async Task<string> SaveImageAsync(string base64)
+        {
+            if(base64.Contains(","))
+                base64 = base64.Split(',')[1];
+            var bytes = Convert.FromBase64String(base64);
+            var fileName = await SaveBytesCompres(bytes);
+            return fileName;
+        }
+
         private static async Task<string> SaveBytesCompres(byte[] bytes)
         {
             string imageName = Path.GetRandomFileName() + ".webp";
