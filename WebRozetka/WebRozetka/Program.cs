@@ -45,6 +45,8 @@ builder.Services.AddAuthentication(options =>
     cfg.TokenValidationParameters = new TokenValidationParameters()
     {
         IssuerSigningKey = singinKey,
+        ValidateAudience = false,
+        ValidateIssuer = false,
         ValidateLifetime = true,
         ValidateIssuerSigningKey=true,
         ClockSkew = TimeSpan.Zero
