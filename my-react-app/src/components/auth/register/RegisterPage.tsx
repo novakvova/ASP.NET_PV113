@@ -1,7 +1,7 @@
 import {useState} from "react";
 
 import { PlusOutlined } from '@ant-design/icons';
-import {Button, Divider, Form, Input, message, Modal, Row, Upload} from 'antd';
+import {Button, Form, Input, message, Modal, Row, Upload} from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import TextArea from "antd/es/input/TextArea";
@@ -9,7 +9,7 @@ import {ICategoryCreate, ICategoryCreateForm, ICategoryItem} from "../../../inte
 import http_common from "../../../http_common.ts";
 
 
-const CategoryCreatePage: React.FC = () => {
+const RegisterPage = () => {
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -77,7 +77,7 @@ const CategoryCreatePage: React.FC = () => {
     return (
         <Row gutter={16}>
             {contextHolder}
-            <Divider orientation="left">CТВОРИТИ КАТЕГОРІЮ</Divider>
+            <h1>Реєстрація на сайті</h1>
             <Form
                 form={form}
                 onFinish={onFinish}
@@ -149,4 +149,4 @@ const CategoryCreatePage: React.FC = () => {
     )
 }
 
-export default  CategoryCreatePage;
+export default  RegisterPage;
