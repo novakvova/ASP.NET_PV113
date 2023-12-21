@@ -4,17 +4,20 @@ import { PlusOutlined } from '@ant-design/icons';
 import {Button, Form, Input, message, Modal, Row, Upload} from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
-import TextArea from "antd/es/input/TextArea";
-import {ICategoryCreate, ICategoryCreateForm, ICategoryItem} from "../../../interfaces/categories";
 import http_common from "../../../http_common.ts";
+import {IRegisterForm, IRegister, ILoginResult, IUserLoginInfo} from "../../../interfaces/auth";
+import {jwtDecode} from "jwt-decode";
+import {imageConverter} from "../../../interfaces/forms";
+import {useNavigate} from "react-router-dom";
 
 
 const RegisterPage = () => {
+    const navigator = useNavigate();
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [file, setFile] = useState<UploadFile | null>();
-    const [form] = Form.useForm<ICategoryCreateForm>();
+    const [form] = Form.useForm<IRegisterForm>();
 
     const [messageApi, contextHolder] = message.useMessage();
     const handleCancel = () => setPreviewOpen(false);
@@ -35,19 +38,21 @@ const RegisterPage = () => {
     const onReset = () => {
         onClear();
     };
-    const onFinish = async (values: ICategoryCreateForm) => {
-        const data : ICategoryCreate = {...values, image : values.image?.originFileObj}
+    const onFinish = async (values: IRegisterForm) => {
+        const data : IRegister = {...values, imageBase64: values.image?.thumbUrl}
+        console.log("Data send server", data);
+
         try {
             const result =
-                await http_common.post<ICategoryItem>("/api/categories", data,
-                    {
-                        headers: {
-                            "Content-Type":"multipart/form-data"
-                        }
-                    });
-            console.log("Create new category", result);
+                await http_common.post<ILoginResult>("/api/account/register", data);
+
+            const {token} = result.data;
+            const user: IUserLoginInfo = jwtDecode<IUserLoginInfo>(token);
+            console.log("User info", user);
+            localStorage.token=token;
             success();
             onClear();
+            navigator("/");
         }
         catch {
             error();
@@ -85,32 +90,49 @@ const RegisterPage = () => {
                 style={{minWidth: '100%', display: 'flex', flexDirection: "column", justifyContent: "center", padding:20}}
             >
                 <Form.Item
-                    label="Назва"
-                    name="name"
-                    htmlFor="name"
+                    label="Ім'я"
+                    name="firstName"
+                    htmlFor="firstName"
                     rules={[
                         {required: true, message: 'Це поле є обов\'язковим!'},
-                        {min: 3, message: 'Назва повинна містити мінімум 3 символи!'}
+                        {min: 2, message: 'Ім\'я повинна містити мінімум 2 символи!'}
                     ]}
                 >
-                    <Input autoComplete="name"/>
+                    <Input autoComplete="firstName"/>
                 </Form.Item>
 
                 <Form.Item
-                    label="Опис"
-                    name="description"
-                    htmlFor="description"
+                    label="Прізвище"
+                    name="lastName"
+                    htmlFor="lastName"
                     rules={[
                         {required: true, message: 'Це поле є обов\'язковим!'},
-                        {min: 10, message: 'Опис повинен містити мінімум 10 символів!'}
+                        {min: 2, message: 'Прізвище повинна містити мінімум 2 символи!'}
                     ]}
                 >
-                    <TextArea/>
+                    <Input autoComplete="lastName"/>
+                </Form.Item>
+
+                <Form.Item
+                    label="Електронна пошта"
+                    name="email"
+                    htmlFor="email"
+                    rules={[
+                        {
+                            type: 'email',
+                            message: 'Формати пошти не правильний!',
+                        },
+                        {required: true, message: 'Це поле є обов\'язковим!'},
+                        {min: 2, message: 'Пошта повинна містити мінімум 2 символи!'}
+                    ]}
+                >
+                    <Input autoComplete="email" />
                 </Form.Item>
 
                 <Form.Item
                     label="Фото"
                     name={"image"}
+                    getValueFromEvent={imageConverter}
                 >
                     <Upload
                         beforeUpload={() => false}
@@ -118,7 +140,6 @@ const RegisterPage = () => {
                         listType="picture-card"
                         onChange={handleChange}
                         onPreview={handlePreview}
-                        fileList={file ? [file] : []}
                         accept="image/*"
                     >
                         {file ? null :
@@ -131,6 +152,41 @@ const RegisterPage = () => {
                     </Upload>
                 </Form.Item>
 
+                <Form.Item
+                    name="password"
+                    label="Пароль"
+                    rules={[
+                        { required: true, message: 'Вкажіть Ваш пароль!', },
+                        { min: 6, message: 'Пароль має мати мінімум 6 символів!', },
+                    ]}
+                    hasFeedback
+                >
+                    <Input.Password/>
+                </Form.Item>
+
+                <Form.Item
+                    name="confirm"
+                    label="Повторіть Пароль"
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Будь-ласка підтвердіть пароль!',
+                        },
+                        ({getFieldValue}) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Пароль не співпадають!'));
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password/>
+                </Form.Item>
+
 
                 <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
                     <img alt="example" style={{width: '100%'}} src={previewImage}/>
@@ -138,7 +194,7 @@ const RegisterPage = () => {
 
                 <Row style={{display: 'flex', justifyContent: 'center'}}>
                     <Button style={{margin:10}} type="primary" htmlType="submit">
-                        Submit
+                        Реєструватися
                     </Button>
                     <Button  style={{margin:10}}  htmlType="button" onClick={onReset}>
                         Reset
