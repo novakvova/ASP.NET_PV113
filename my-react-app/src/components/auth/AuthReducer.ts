@@ -1,4 +1,3 @@
-
 //Дані які буде зберігати наш редусер і може їх мінять
 import {IUserLoginInfo} from "../../interfaces/auth";
 

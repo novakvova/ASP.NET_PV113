@@ -20,8 +20,10 @@ const LoginPage = () => {
     const onFinish = async (values: ILogin) => {
 
         try {
+            //begin load
             const result =
                 await http_common.post<ILoginResult>("/api/account/login", values);
+            //cancel load
             const {token} = result.data;
             const user: IUserLoginInfo = jwtDecode<IUserLoginInfo>(token);
             console.log("User info", user);
