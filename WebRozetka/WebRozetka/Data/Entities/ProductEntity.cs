@@ -23,5 +23,6 @@ namespace WebRozetka.Data.Entities
         public virtual ICollection<ProductImageEntity> ProductImages { get; set; }
 
         public virtual ICollection<BasketEntity> Baskets { get; set; }
+        public virtual ICollection<OrderItemEntity> OrderItems { get; set; }
     }
 }

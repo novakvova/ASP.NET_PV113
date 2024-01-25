@@ -14,5 +14,6 @@ namespace WebRozetka.Data.Entities.Orders
 
         public virtual UserEntity User { get; set; }
         public virtual OrderStatusEntity OrderStatus { get; set; }
+        public virtual ICollection<OrderItemEntity> OrderItems { get; set; }
     }
 }
