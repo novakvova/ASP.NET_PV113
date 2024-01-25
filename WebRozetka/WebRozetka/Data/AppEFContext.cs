@@ -21,6 +21,7 @@ namespace WebRozetka.Data
         public DbSet<OrderStatusEntity> OrderStatuses { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
+        public DbSet<OrderContactInfoEntity> OrderContactInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
