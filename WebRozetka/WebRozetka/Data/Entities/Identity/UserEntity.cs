@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using WebRozetka.Data.Entities.Orders;
 
 namespace WebRozetka.Data.Entities.Identity
 {
@@ -12,5 +13,6 @@ namespace WebRozetka.Data.Entities.Identity
         [StringLength(100)]
         public string Image { get; set; }
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+        public virtual ICollection<BasketEntity> Baskets { get; set; }
     }
 }

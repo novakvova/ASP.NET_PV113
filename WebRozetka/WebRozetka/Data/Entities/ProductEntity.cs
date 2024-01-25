@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebRozetka.Data.Entities.Orders;
 
 namespace WebRozetka.Data.Entities
 {
@@ -20,5 +21,7 @@ namespace WebRozetka.Data.Entities
         public virtual CategoryEntity Category { get; set; }
 
         public virtual ICollection<ProductImageEntity> ProductImages { get; set; }
+
+        public virtual ICollection<BasketEntity> Baskets { get; set; }
     }
 }
