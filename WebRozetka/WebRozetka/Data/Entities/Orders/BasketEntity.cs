@@ -13,5 +13,6 @@ namespace WebRozetka.Data.Entities.Orders
         public virtual UserEntity User { get; set; }
         public virtual ProductEntity Product { get; set; }
         public short Count { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace WebRozetka.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous] //До списку продутів дати доступ не авторизованим корисувачам
         public async Task<IActionResult> List()
         {
             var model = await _appEFContext.Products

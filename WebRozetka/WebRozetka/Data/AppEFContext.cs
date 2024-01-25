@@ -18,6 +18,7 @@ namespace WebRozetka.Data
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
         public DbSet<BasketEntity> Baskets { get; set; }
+        public DbSet<OrderStatusEntity> OrderStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
