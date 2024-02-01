@@ -30,7 +30,12 @@ namespace WebRozetka.Data
                 {
                     novaPoshta.GetAreas();
                 }
-                
+
+                if (!context.Settlements.Any())
+                {
+                    novaPoshta.GetSettlements();
+                }
+
 
                 #region Додавання користувачів та ролей
 

@@ -67,5 +67,50 @@ namespace WebRozetka.Services
             }
         }
 
+        public void GetSettlements()
+        {
+            string key = _configuration.GetValue<string>("NovaposhtaKey");
+            int page = 1;
+            while(true)
+            {
+                NPSettlementRequestViewModel model = new NPSettlementRequestViewModel
+                {
+                    ApiKey = key,
+                    ModelName = "AddressGeneral",
+                    CalledMethod = "getSettlements",
+                    MethodProperties = new NPSettlementProperties
+                    {
+                        Page = page
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(model);
+                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PostAsync("https://api.novaposhta.ua/v2.0/json/", content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = response.Content.ReadAsStringAsync().Result;
+                    var result = JsonConvert.DeserializeObject<NPSettlementResponseViewModel>(responseData);
+                    if (result.Data.Any())
+                    {
+                        List<SettlementEntity> dataEntities = 
+                            _mapper.Map<List<SettlementEntity>>(result.Data);
+
+                        _context.Settlements.AddRange(dataEntities);
+                        _context.SaveChanges();
+                        page++;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Error novaposhta: {response.StatusCode}");
+                }
+            }
+            
+        }
     }
 }

@@ -3,5 +3,6 @@
     public interface INovaPoshtaService
     {
         void GetAreas();
+        void GetSettlements();
     }
 }

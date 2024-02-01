@@ -1,8 +1,10 @@
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -88,7 +90,12 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors();
 
-builder.Services.AddAutoMapper(typeof(AppMapProfile));
+builder.Services.AddScoped(provider => new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new AppMapProfile(provider.GetService<AppEFContext>()));
+}).CreateMapper());
+
+//builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WebRozetka.Data;
 using WebRozetka.Data.Entities;
 using WebRozetka.Data.Entities.Addres;
 using WebRozetka.Data.Entities.Orders;
@@ -11,8 +12,11 @@ namespace WebRozetka.Mapper
 {
     public class AppMapProfile : Profile
     {
-        public AppMapProfile()
+        private readonly AppEFContext _context;
+        public AppMapProfile(AppEFContext context)
         {
+            _context = context;
+
             CreateMap<CategoryEntity, CategoryItemViewModel>();
             CreateMap<CategoryCreateViewModel, CategoryEntity>();
          
@@ -28,6 +32,10 @@ namespace WebRozetka.Mapper
                 .ForMember(x => x.Price, opt => opt.MapFrom(x => x.Product.Price));
 
             CreateMap<NPAreaItemViewModel, AreaEntity>();
+
+            CreateMap<NPSettlementItemViewModel, SettlementEntity>()
+                .ForMember(dest => dest.AreaId, opt =>  opt.MapFrom(src => _context.Areas.Where(x => x.Ref == src.Area).Select(x => x.Id).SingleOrDefault()))
+                .ForMember(dest => dest.Area, opt => opt.Ignore());
 
         }
     }

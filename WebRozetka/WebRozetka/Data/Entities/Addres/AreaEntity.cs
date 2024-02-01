@@ -13,5 +13,6 @@ namespace WebRozetka.Data.Entities.Addres
         public string Ref { get; set; }
         [Required, StringLength(255)]
         public string Description { get; set; }
+        public virtual ICollection<SettlementEntity> Settlements { get; set; }
     }
 }
