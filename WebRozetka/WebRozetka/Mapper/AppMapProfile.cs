@@ -37,6 +37,10 @@ namespace WebRozetka.Mapper
                 .ForMember(dest => dest.AreaId, opt =>  opt.MapFrom(src => _context.Areas.Where(x => x.Ref == src.Area).Select(x => x.Id).SingleOrDefault()))
                 .ForMember(dest => dest.Area, opt => opt.Ignore());
 
+            CreateMap<NPWarehouseItemViewModel, WarehouseEntity>()
+                .ForMember(dest => dest.SettlementId, opt => opt.MapFrom(src => _context.Settlements.Where(x => x.Ref == src.SettlementRef).Select(x => x.Id).SingleOrDefault()))
+                .ForMember(dest => dest.Settlement, opt => opt.Ignore());
+
         }
     }
 }

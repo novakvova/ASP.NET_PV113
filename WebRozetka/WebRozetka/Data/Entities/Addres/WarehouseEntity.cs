@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebRozetka.Data.Entities.Addres
 {
-    [Table("tblSettlements")]
-    public class SettlementEntity
+    [Table("tblWarehouses")]
+    public class WarehouseEntity
     {
         [Key]
         public int Id { get; set; }
@@ -12,9 +12,11 @@ namespace WebRozetka.Data.Entities.Addres
         public string Ref { get; set; }
         [Required, StringLength(200)]
         public string Description { get; set; }
-        [ForeignKey("Area")]
-        public int AreaId { get; set; }
-        public virtual AreaEntity Area { get; set; }
-        public virtual ICollection<WarehouseEntity>  Warehouses { get; set; }
+
+        public int Number { get; set; }
+
+        [ForeignKey("Settlement")]
+        public int SettlementId { get; set; }
+        public virtual SettlementEntity Settlement { get; set; }
     }
 }

@@ -4,5 +4,6 @@
     {
         void GetAreas();
         void GetSettlements();
+        void GetWarehouses();
     }
 }

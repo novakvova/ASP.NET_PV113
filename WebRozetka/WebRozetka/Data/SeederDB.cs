@@ -36,6 +36,11 @@ namespace WebRozetka.Data
                     novaPoshta.GetSettlements();
                 }
 
+                if (!context.Warehouses.Any())
+                {
+                    novaPoshta.GetWarehouses();
+                }
+
 
                 #region Додавання користувачів та ролей
 

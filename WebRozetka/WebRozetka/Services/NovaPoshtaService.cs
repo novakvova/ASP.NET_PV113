@@ -112,5 +112,50 @@ namespace WebRozetka.Services
             }
             
         }
+
+        public void GetWarehouses()
+        {
+            string key = _configuration.GetValue<string>("NovaposhtaKey");
+            int page = 1;
+            while (true)
+            {
+                NPWarehouseRequestViewModel model = new NPWarehouseRequestViewModel
+                {
+                    ApiKey = key,
+                    ModelName = "Address",
+                    CalledMethod = "getWarehouses",
+                    MethodProperties = new NPWarehouseProperties
+                    {
+                        Page = page
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(model);
+                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PostAsync("https://api.novaposhta.ua/v2.0/json/", content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = response.Content.ReadAsStringAsync().Result;
+                    var result = JsonConvert.DeserializeObject<NPWarehouseResponseViewModel>(responseData);
+                    if (result.Data.Any())
+                    {
+                        List<WarehouseEntity> dataEntities =
+                            _mapper.Map<List<WarehouseEntity>>(result.Data);
+
+                        _context.Warehouses.AddRange(dataEntities);
+                        _context.SaveChanges();
+                        page++;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Error novaposhta: {response.StatusCode}");
+                }
+            }
+        }
     }
 }
