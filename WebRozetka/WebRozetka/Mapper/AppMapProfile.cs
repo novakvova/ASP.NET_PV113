@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using WebRozetka.Data.Entities;
+using WebRozetka.Data.Entities.Addres;
 using WebRozetka.Data.Entities.Orders;
 using WebRozetka.Models.Category;
+using WebRozetka.Models.NovaPoshta;
 using WebRozetka.Models.Orders;
 using WebRozetka.Models.Product;
 
@@ -24,6 +26,9 @@ namespace WebRozetka.Mapper
             CreateMap<BasketEntity, BasketItemViewModel>()
                 .ForMember(x => x.ProductName, opt => opt.MapFrom(x => x.Product.Name))
                 .ForMember(x => x.Price, opt => opt.MapFrom(x => x.Product.Price));
+
+            CreateMap<NPAreaItemViewModel, AreaEntity>();
+
         }
     }
 }

@@ -33,6 +33,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<INovaPoshtaService, NovaPoshtaService>();
 
 var singinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<String>("JwtSecretKey"))); 
 
