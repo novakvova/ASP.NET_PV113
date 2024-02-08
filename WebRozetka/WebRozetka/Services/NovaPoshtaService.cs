@@ -52,9 +52,16 @@ namespace WebRozetka.Services
                 var result = JsonConvert.DeserializeObject<NPAreaResponseViewModel> (responseData);
                 if (result.Data.Any())
                 {
-                    List<AreaEntity> dataEntities = _mapper.Map<List<AreaEntity>>(result.Data);
-                    _context.Areas.AddRange(dataEntities);
-                    _context.SaveChanges();
+                    foreach(var item in result.Data)
+                    {
+                        var entity = _context.Areas.SingleOrDefault(x=>x.Ref==item.Ref);
+                        if(entity==null)
+                        {
+                            entity = _mapper.Map<AreaEntity>(item);
+                            _context.Areas.Add(entity);
+                            _context.SaveChanges();
+                        }
+                    }
                 }
                 else
                 {
@@ -93,10 +100,15 @@ namespace WebRozetka.Services
                     var result = JsonConvert.DeserializeObject<NPSettlementResponseViewModel>(responseData);
                     if (result.Data.Any())
                     {
-                        List<SettlementEntity> dataEntities = 
-                            _mapper.Map<List<SettlementEntity>>(result.Data);
-
-                        _context.Settlements.AddRange(dataEntities);
+                        foreach (var item in result.Data)
+                        {
+                            var entity = _context.Settlements.SingleOrDefault(x => x.Ref == item.Ref);
+                            if (entity == null)
+                            {
+                                entity = _mapper.Map<SettlementEntity>(item);
+                                _context.Settlements.Add(entity);
+                            }
+                        }
                         _context.SaveChanges();
                         page++;
                     }
@@ -117,45 +129,59 @@ namespace WebRozetka.Services
         {
             string key = _configuration.GetValue<string>("NovaposhtaKey");
             int page = 1;
-            while (true)
+            try
             {
-                NPWarehouseRequestViewModel model = new NPWarehouseRequestViewModel
+                while (true)
                 {
-                    ApiKey = key,
-                    ModelName = "Address",
-                    CalledMethod = "getWarehouses",
-                    MethodProperties = new NPWarehouseProperties
+                    NPWarehouseRequestViewModel model = new NPWarehouseRequestViewModel
                     {
-                        Page = page
-                    }
-                };
+                        ApiKey = key,
+                        ModelName = "Address",
+                        CalledMethod = "getWarehouses",
+                        MethodProperties = new NPWarehouseProperties
+                        {
+                            Page = page
+                        }
+                    };
 
-                string json = JsonConvert.SerializeObject(model);
-                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = _httpClient.PostAsync("https://api.novaposhta.ua/v2.0/json/", content).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseData = response.Content.ReadAsStringAsync().Result;
-                    var result = JsonConvert.DeserializeObject<NPWarehouseResponseViewModel>(responseData);
-                    if (result.Data.Any())
+                    string json = JsonConvert.SerializeObject(model);
+                    HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = _httpClient.PostAsync("https://api.novaposhta.ua/v2.0/json/", content).Result;
+                    if (response.IsSuccessStatusCode)
                     {
-                        List<WarehouseEntity> dataEntities =
-                            _mapper.Map<List<WarehouseEntity>>(result.Data);
+                        string responseData = response.Content.ReadAsStringAsync().Result;
+                        var result = JsonConvert.DeserializeObject<NPWarehouseResponseViewModel>(responseData);
+                        if (result.Data.Any())
+                        {
 
-                        _context.Warehouses.AddRange(dataEntities);
-                        _context.SaveChanges();
-                        page++;
+                            foreach (var item in result.Data)
+                            {
+                                var entity = _context.Warehouses.SingleOrDefault(x => x.Ref == item.Ref);
+                                if (entity == null)
+                                {
+                                    entity = _mapper.Map<WarehouseEntity>(item);
+                                    _context.Warehouses.Add(entity);
+                                }
+                            }
+                            _context.SaveChanges();
+                            page++;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                     else
                     {
-                        return;
+                        Console.WriteLine($"Error novaposhta: {response.StatusCode}");
                     }
                 }
-                else
-                {
-                    Console.WriteLine($"Error novaposhta: {response.StatusCode}");
-                }
             }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Problem: {0}", ex.Message);
+            }
+            
         }
     }
 }
