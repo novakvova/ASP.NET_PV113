@@ -390,7 +390,12 @@ namespace WebRozetka.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("text");
 
+                    b.Property<int>("WarehousesId")
+                        .HasColumnType("integer");
+
                     b.HasKey("OrderId");
+
+                    b.HasIndex("WarehousesId");
 
                     b.ToTable("tblOrderContactInfos");
                 });
@@ -658,7 +663,15 @@ namespace WebRozetka.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebRozetka.Data.Entities.Addres.WarehouseEntity", "Warehouses")
+                        .WithMany()
+                        .HasForeignKey("WarehousesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Order");
+
+                    b.Navigation("Warehouses");
                 });
 
             modelBuilder.Entity("WebRozetka.Data.Entities.Orders.OrderEntity", b =>
