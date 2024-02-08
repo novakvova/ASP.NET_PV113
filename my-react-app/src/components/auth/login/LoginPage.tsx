@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 //import {useAppDispatch} from "../../../app/hooks.ts";
 import {AuthReducerActionType} from "../AuthReducer.ts";
 import {useDispatch} from "react-redux";
+import setAuthToken from "../../../helpers/setAuthToken.ts";
 
 const LoginPage = () => {
 
@@ -26,8 +27,9 @@ const LoginPage = () => {
             //cancel load
             const {token} = result.data;
             const user: IUserLoginInfo = jwtDecode<IUserLoginInfo>(token);
-            console.log("User info", user);
+
             localStorage.token = token;
+            setAuthToken(localStorage.token);
             dispatch({
                     type: AuthReducerActionType.LOGIN_USER,
                     payload: {

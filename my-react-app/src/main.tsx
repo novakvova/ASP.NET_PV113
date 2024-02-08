@@ -7,8 +7,10 @@ import {store} from "./store";
 import {IUserLoginInfo} from "./interfaces/auth";
 import {jwtDecode} from "jwt-decode";
 import {AuthReducerActionType} from "./components/auth/AuthReducer.ts";
+import setAuthToken from "./helpers/setAuthToken.ts";
 
 if(localStorage.token) {
+    setAuthToken(localStorage.token);
     const user: IUserLoginInfo = jwtDecode<IUserLoginInfo>(localStorage.token);
     store.dispatch({
             type: AuthReducerActionType.LOGIN_USER,
@@ -18,6 +20,7 @@ if(localStorage.token) {
             } as IUserLoginInfo
         }
     );
+
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

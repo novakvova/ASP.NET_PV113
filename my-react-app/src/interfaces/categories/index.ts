@@ -13,9 +13,13 @@ export interface ICategoryCreate {
     description: string;
 }
 
+export interface ICategoryImage {
+    file: File;
+}
+
 export interface ICategoryCreateForm {
     name: string;
-    image: IUploadedFile | null;
+    image: ICategoryImage | null;
     description: string;
 }
 
