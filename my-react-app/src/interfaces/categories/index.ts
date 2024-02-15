@@ -1,4 +1,9 @@
-import {IUploadedFile} from "../forms";
+// import {IUploadedFile} from "../forms";
+
+export interface ICategoryName {
+    id: number,
+    name: string,
+}
 
 export interface ICategoryItem {
     id: number;

@@ -4,6 +4,7 @@ using WebRozetka.Data.Entities;
 using WebRozetka.Data.Entities.Addres;
 using WebRozetka.Data.Entities.Orders;
 using WebRozetka.Models.Category;
+using WebRozetka.Models.Helpers;
 using WebRozetka.Models.NovaPoshta;
 using WebRozetka.Models.Orders;
 using WebRozetka.Models.Product;
@@ -43,6 +44,9 @@ namespace WebRozetka.Mapper
 
             CreateMap<ProductEditViewModel, ProductEntity>()
                 .ForMember(dest => dest.ProductImages, opt => opt.Ignore());
+
+            CreateMap<CategoryEntity, SelectItemViewModel>();
+
 
         }
     }

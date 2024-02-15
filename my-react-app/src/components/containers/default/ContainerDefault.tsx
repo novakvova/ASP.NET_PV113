@@ -76,12 +76,12 @@ const ContainerDefault: React.FC = () => {
                         {
                             key: '2',
                             icon: <VideoCameraOutlined />,
-                            label: <Link to="/">Головна</Link>,
+                            label: <Link to="/">Категорії</Link>,
                         },
                         {
                             key: '3',
                             icon: <UploadOutlined />,
-                            label: <Link to="/create">Додати</Link>,
+                            label: <Link to="/products">Продукти</Link>,
                         },
                     ]}
                 />
