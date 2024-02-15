@@ -108,6 +108,7 @@ namespace WebRozetka.Controllers
             try
             {
                 var result = await _appEFContext.Categories
+                    .Where(x=>!x.IsDeleted)
                     .Select(x=>_mapper.Map<SelectItemViewModel>(x)).ToListAsync();
 
                 return Ok(result);

@@ -7,11 +7,14 @@ import http_common from "../../../http_common.ts";
 import TextArea from "antd/es/input/TextArea";
 import {imageConverterToFileArray} from "../../../helpers/converter.ts";
 import {DownloadOutlined } from '@ant-design/icons';
+import {useNavigate} from "react-router-dom";
 
 const ProductCreatePage = () => {
     const [form] = Form.useForm<IProductCreate>();
     const [status, setStatus] = useState<Status>(Status.IDLE);
     const [categories, setCategories] = useState<ICategoryName[]>([]);
+
+    const navigate = useNavigate();
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -26,9 +29,12 @@ const ProductCreatePage = () => {
     const onFinish = async (values: IProductCreate) => {
         try {
             console.log("Submit form", values);
-            //const response = await dispatch(addProduct(values));
-            //unwrapResult(response);
-            //navigate(`/categories/products-category/${values.categoryId}`);
+            await http_common.post("/api/products", values,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            });
+            navigate(`/products`);
         } catch (error) {
             //handleError(error);
         }

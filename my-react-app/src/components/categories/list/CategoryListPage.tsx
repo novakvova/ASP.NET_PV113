@@ -26,7 +26,13 @@ const CategoryListPage = () => {
     }, []);
 
     const handleDeleteCategory = (id: number) => {
-        console.log("delete id", id);
+        //console.log("delete id", id);
+        http_common.delete(`/api/categories/${id}`)
+            .then(resp => {
+                console.log("delete is good", resp);
+                const updatedList = list.filter(item => item.id !== id);
+                setList(updatedList);
+            });
     }
 
     const content = list.map(x => (
