@@ -59,5 +59,56 @@ namespace WebRozetka.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct([FromForm] ProductEditViewModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest("Новий продукт є пустим!");
+            }
+
+            try
+            {
+                var product = _mapper.Map<ProductEntity>(model);
+                _appEFContext.Products.Update(product); 
+                await _appEFContext.SaveChangesAsync();
+
+                var dbPhotos = _appEFContext.ProductImages.Where(x => x.ProductId == model.Id);
+
+                if (dbPhotos != null)
+                {
+                    foreach (var photo in dbPhotos)
+                    {
+                        if (!model.OldPhotos.Any(x => x.Photo == photo.Name))
+                        {
+                            _appEFContext.ProductImages.Remove(photo);
+                            ImageWorker.RemoveImage(photo.Name);
+                        }
+                        else
+                        {
+                            photo.Priority = model.OldPhotos.SingleOrDefault(x => x.Photo == photo.Name).Priority;
+                        }
+                    }
+                }
+
+                if (model.NewPhotos != null)
+                {
+                    foreach (var image in model.NewPhotos)
+                    {
+                        var imagePath = await ImageWorker.SaveImageAsync(image.Photo);
+
+                        _appEFContext.ProductImages.Add(new ProductImageEntity { Name = imagePath, ProductId = product.Id, Priority = image.Priority });
+                    }
+                }
+
+                await _appEFContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Сталася помилка при створенні продукту: " + ex.Message);
+            }
+        }
     }
 }

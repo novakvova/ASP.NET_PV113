@@ -41,6 +41,9 @@ namespace WebRozetka.Mapper
                 .ForMember(dest => dest.SettlementId, opt => opt.MapFrom(src => _context.Settlements.Where(x => x.Ref == src.SettlementRef).Select(x => x.Id).SingleOrDefault()))
                 .ForMember(dest => dest.Settlement, opt => opt.Ignore());
 
+            CreateMap<ProductEditViewModel, ProductEntity>()
+                .ForMember(dest => dest.ProductImages, opt => opt.Ignore());
+
         }
     }
 }

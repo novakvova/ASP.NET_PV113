@@ -46,5 +46,22 @@ namespace WebRozetka.Helpers
             return imageName;
         }
 
+        public static bool RemoveImage(string name)
+        {
+            try
+            {
+                string fileRemove = Path.Combine(Directory.GetCurrentDirectory(), "images", name);
+                if (System.IO.File.Exists(fileRemove))
+                {
+                    System.IO.File.Delete(fileRemove);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
