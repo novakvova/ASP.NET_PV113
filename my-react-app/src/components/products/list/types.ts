@@ -12,8 +12,8 @@ export interface IProductData {
     list: IProductItem[],
     pageIndex: number,
     pageSize: number,
-    totalCount: number,
-    totalPages: number
+    totalCount: number
+    // totalPages: number
 }
 
 export interface IProductSearch{

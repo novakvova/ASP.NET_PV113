@@ -46,6 +46,16 @@ namespace WebRozetka.Helpers
             return imageName;
         }
 
+        public static async Task<string> SaveImageFromUrlAsync(string imageUrl)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var bytes = await httpClient.GetByteArrayAsync(imageUrl);
+                var fileName = await SaveBytesCompres(bytes);
+                return fileName;
+            }
+        }
+
         public static bool RemoveImage(string name)
         {
             try

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Bogus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebRozetka.Constants;
 using WebRozetka.Data.Entities;
@@ -72,7 +73,49 @@ namespace WebRozetka.Data
                 }
 
                 #endregion
+
+                #region Додавання товарів
+
+                if (context.Products.Count() < 1000)
+                {
+                    Faker faker = new Faker();
+
+                    var categoriesId = context.Categories.Where(c => !c.IsDeleted).Select(c => c.Id).ToList();
+
+                    var fakeProduct = new Faker<ProductEntity>("uk")
+                         .RuleFor(o => o.IsDeleted, f => false)
+                         .RuleFor(o => o.DateCreated, f => DateTime.UtcNow)
+                         .RuleFor(o => o.Name, f => f.Commerce.ProductName())
+                         .RuleFor(o => o.Price, f => Math.Round(f.Random.Decimal(1, 1000), 2))
+                         .RuleFor(o => o.Description, f => f.Lorem.Paragraph())
+                         .RuleFor(o => o.Quantity, f => f.Random.Number(0, 1000))
+                         .RuleFor(o => o.CategoryId, f => f.PickRandom(categoriesId));
+
+                    var fakeProducts = fakeProduct.Generate(100);
+
+                    context.Products.AddRange(fakeProducts);
+                    context.SaveChanges();
+
+                    var photos = new List<ProductImageEntity>();
+
+                    foreach (var product in fakeProducts)
+                    {
+                        var numberOfPhotos = faker.Random.Number(1, 3);
+                        
+                        for (int i = 0; i < numberOfPhotos; i++)
+                        {
+                            var fakeImage = ImageWorker.SaveImageFromUrlAsync("https://loremflickr.com/800/600/fruits").Result;
+                            photos.Add(new ProductImageEntity { Name = fakeImage, ProductId = product.Id, 
+                                Priority=(byte)(i+1) });
+                        }
+                    }
+                    context.AddRange(photos);
+                    context.SaveChanges();
+                }
             }
+
+            #endregion
         }
+        
     }
 }
