@@ -11,7 +11,7 @@ const { Meta } = Card;
 
 const ProductCard : React.FC<IProductItem> = (props) => {
 
-    const {name, price, images, quantity} = props;
+    const {name, price, categoryName, images, quantity} = props;
 
     return (
         <Col style={{padding: 10}} xxl={4} lg={6} md={8} sm={12}>
@@ -21,7 +21,7 @@ const ProductCard : React.FC<IProductItem> = (props) => {
             >
                 <Card
                     bodyStyle={{flex: '1', paddingBlock: '10px'}}
-                    style={{height: 280, display: 'flex', flexDirection: 'column', paddingTop: '40px'}}
+                    style={{height: 320, display: 'flex', flexDirection: 'column', paddingTop: '40px'}}
                     hoverable
                     cover={
                         <img
@@ -46,9 +46,14 @@ const ProductCard : React.FC<IProductItem> = (props) => {
                     <Meta
                         title={name}
                         description={
+                        <>
                             <Title level={5} type="success">{Number(price).toFixed(2)} грн</Title>
+                            <p>{categoryName}</p>
+                        </>
                         }
+
                     />
+
                 </Card>
             </Badge.Ribbon>
         </Col>

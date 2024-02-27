@@ -76,7 +76,7 @@ namespace WebRozetka.Data
 
                 #region Додавання товарів
 
-                if (context.Products.Count() < 1000)
+                if (context.Products.Count() < 200)
                 {
                     Faker faker = new Faker();
 
@@ -104,7 +104,7 @@ namespace WebRozetka.Data
                         
                         for (int i = 0; i < numberOfPhotos; i++)
                         {
-                            var fakeImage = ImageWorker.SaveImageFromUrlAsync("https://loremflickr.com/800/600/fruits").Result;
+                            var fakeImage = ImageWorker.SaveImageFromUrlAsync("https://loremflickr.com/800/600").Result;
                             photos.Add(new ProductImageEntity { Name = fakeImage, ProductId = product.Id, 
                                 Priority=(byte)(i+1) });
                         }

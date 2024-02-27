@@ -5,6 +5,7 @@ export interface IProductItem {
     description: string,
     quantity: number,
     images: string[],
+    categoryName: string,
     categoryId: number,
 }
 

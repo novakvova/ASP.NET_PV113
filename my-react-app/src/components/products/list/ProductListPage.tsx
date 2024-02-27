@@ -1,10 +1,11 @@
 import {Link, useSearchParams} from "react-router-dom";
-import {Button, Col, Form, Input, Pagination, Row} from "antd";
+import {Button, Col, Collapse, Form, Input, Pagination, Row, Select} from "antd";
 import {useEffect, useState} from "react";
 import {IProductData, IProductSearch} from "./types.ts";
 import {ICategoryName} from "../../../interfaces/categories";
 import http_common from "../../../http_common.ts";
 import ProductCard from "./ProductCard.tsx";
+
 
 const ProductListPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +32,7 @@ const ProductListPage = () => {
 
     useEffect(() => {
         http_common.get<ICategoryName[]>("/api/categories/names")
-            .then(resp=> {
+            .then(resp => {
                 console.log("list categories", resp.data);
                 setCategories(resp.data);
             });
@@ -42,17 +43,19 @@ const ProductListPage = () => {
             {
                 params: formParams
             })
-            .then(resp=> {
+            .then(resp => {
                 console.log("Get products", resp.data);
                 setData((resp.data));
             });
     }, [formParams]);
 
     const onSubmit = async (values: IProductSearch) => {
-        findProducts({...formParams,
+        findProducts({
+            ...formParams,
             page: 1,
             name: values.name,
-            description: values.description
+            description: values.description,
+            categoryId: values.categoryId
         });
     }
 
@@ -65,12 +68,11 @@ const ProductListPage = () => {
         updateSearchParams(model);
     }
 
-    const updateSearchParams = (params : IProductSearch) =>{
+    const updateSearchParams = (params: IProductSearch) => {
         for (const [key, value] of Object.entries(params)) {
-            if(key=="pageSize" && value==8) {
+            if (key == "pageSize" && value == 8) {
                 searchParams.delete(key);
-            }
-            else if (value !== undefined && value !== 0 && value != "") {
+            } else if (value !== undefined && value !== 0 && value != "") {
                 searchParams.set(key, value);
             } else {
                 searchParams.delete(key);
@@ -79,83 +81,110 @@ const ProductListPage = () => {
         setSearchParams(searchParams);
     };
 
-    const {list, pageSize, pageIndex, totalCount } = data;
+    const optionsData = [
+        ...(categories?.map(item => ({label: item.name, value: item.id})) || []),
+        {label: 'Усі', value: 0},
+    ];
+
+    const {list, pageSize, pageIndex, totalCount} = data;
     return (
-      <>
-          <h1>Список продуктів</h1>
-          <Link to={"/products/create"}>
-              <Button type="primary">
-                  Додати
-              </Button>
-          </Link>
+        <>
+            <h1>Список продуктів</h1>
+            <Link to={"/products/create"}>
+                <Button type="primary">
+                    Додати
+                </Button>
+            </Link>
 
-          <Row gutter={16}>
-              <Form form={form}
-                    onFinish={onSubmit}
-                    layout={"vertical"}
-                    initialValues={formParams}
-                    style={{
-                        minWidth: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        padding: 20,
-                    }}
-              >
-                  <Form.Item
-                      label="Назва"
-                      name="name"
-                      htmlFor="name"
-                  >
-                      <Input autoComplete="name"/>
-                  </Form.Item>
+            <Collapse defaultActiveKey={0}>
+                <Collapse.Panel key={1} header={"Панель пошуку"}>
+                        <Form form={form}
+                              onFinish={onSubmit}
+                              layout={"vertical"}
+                              initialValues={formParams}
+                              style={{
+                                  minWidth: '100%',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  padding: 20,
+                              }}
+                        >
+                            <Form.Item
+                                label="Назва"
+                                name="name"
+                                htmlFor="name"
+                            >
+                                <Input autoComplete="name"/>
+                            </Form.Item>
 
-                  <Form.Item
-                      label="Опис"
-                      name="description"
-                      htmlFor="description"
-                  >
-                      <Input autoComplete="description"/>
-                  </Form.Item>
+                            <Form.Item
+                                label="Опис"
+                                name="description"
+                                htmlFor="description"
+                            >
+                                <Input autoComplete="description"/>
+                            </Form.Item>
 
-                  <Row style={{display: 'flex', justifyContent: 'center'}}>
-                      <Button style={{margin: 10}} type="primary" htmlType="submit">
-                          Пошук
-                      </Button>
-                      <Button style={{margin: 10}} htmlType="button" onClick={() =>{ }}>
-                          Скасувати
-                      </Button>
-                  </Row>
-              </Form>
-          </Row>
+                            <Form.Item label="Категорія:" name="categoryId">
+                                <Select
+                                    options={optionsData}
+                                    placeholder="Select Category"
+                                />
+                            </Form.Item>
 
-          <Row gutter={16}>
-              <Col span={24}>
-                  <Row>
-                      {list.length === 0 ? (
-                          <h2>Список пустий</h2>
-                      ) : (
-                          list.map((item) =>
-                              <ProductCard key={item.id} {...item} />,
-                          )
-                      )}
-                  </Row>
-              </Col>
-          </Row>
+                            <Row style={{display: 'flex', justifyContent: 'center'}}>
+                                <Button style={{margin: 10}} type="primary" htmlType="submit">
+                                    Пошук
+                                </Button>
+                                <Button style={{margin: 10}} htmlType="button" onClick={() => {
+                                }}>
+                                    Скасувати
+                                </Button>
+                            </Row>
+                        </Form>
+                </Collapse.Panel>
+            </Collapse>
 
-          <Row style={{marginTop: "10px", width: '100%', display: 'flex', justifyContent: 'center'}}>
-              <Pagination
-                  showTotal={(total, range) => `${range[0]}-${range[1]} із ${total} записів`}
-                  current={pageIndex}
-                  defaultPageSize={pageSize}
-                  total={totalCount}
-                  onChange={handlePageChange}
-                  pageSizeOptions={[4, 8, 12, 20]}
-                  showSizeChanger
-              />
-          </Row>
+            <Row style={{marginTop: "10px", width: '100%', display: 'flex', justifyContent: 'center'}}>
+                <Pagination
+                    showTotal={(total, range) => `${range[0]}-${range[1]} із ${total} записів`}
+                    current={pageIndex}
+                    pageSize={pageSize}
+                    total={totalCount}
+                    onChange={handlePageChange}
+                    pageSizeOptions={[4, 8, 12, 20]}
+                    showSizeChanger
+                />
+            </Row>
 
-      </>
+            <Row gutter={16}>
+                <Col span={24}>
+                    <Row>
+                        {list.length === 0 ? (
+                            <h2>Список пустий</h2>
+                        ) : (
+                            list.map((item) =>
+                                <ProductCard key={item.id} {...item} />,
+                            )
+                        )}
+                    </Row>
+                </Col>
+            </Row>
+
+            <Row style={{marginTop: "10px", width: '100%', display: 'flex', justifyContent: 'center'}}>
+                <Pagination
+                    showTotal={(total, range) => `${range[0]}-${range[1]} із ${total} записів`}
+                    current={pageIndex}
+                    pageSize={pageSize}
+                    total={totalCount}
+                    onChange={handlePageChange}
+                    pageSizeOptions={[4, 8, 12, 20]}
+                    showSizeChanger
+                />
+            </Row>
+
+        </>
     );
 }
 
