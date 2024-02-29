@@ -6,7 +6,6 @@ import {ICategoryName} from "../../../interfaces/categories";
 import http_common from "../../../http_common.ts";
 import ProductCard from "./ProductCard.tsx";
 
-
 const ProductListPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
