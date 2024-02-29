@@ -19,5 +19,7 @@ namespace Blog.Web.Data.Entities
         [StringLength(200)]
         public string Description { get; set; }
 
+        public virtual ICollection<PostTagEntity> PostTags { get; set; }
+
     }
 }

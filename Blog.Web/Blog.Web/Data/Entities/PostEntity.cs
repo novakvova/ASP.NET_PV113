@@ -36,5 +36,7 @@ namespace Blog.Web.Data.Entities
 
         public virtual CategoryEntity Category { get; set; }
 
+        public virtual ICollection<PostTagEntity> PostTags { get; set; }
+
     }
 }
