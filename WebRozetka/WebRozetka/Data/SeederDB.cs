@@ -27,7 +27,7 @@ namespace WebRozetka.Data
                     .GetRequiredService<RoleManager<RoleEntity>>();
 
                 var novaPoshta = scope.ServiceProvider.GetRequiredService<INovaPoshtaService>();
-                if(!context.Areas.Any())
+                if (!context.Areas.Any())
                 {
                     novaPoshta.GetAreas();
                 }
@@ -56,7 +56,7 @@ namespace WebRozetka.Data
                     }
                 }
 
-                if(!context.Users.Any())
+                if (!context.Users.Any())
                 {
                     var user = new UserEntity
                     {
@@ -65,14 +65,36 @@ namespace WebRozetka.Data
                         Email = "admin@gmail.com",
                         UserName = "admin@gmail.com"
                     };
-                    var result = userManager.CreateAsync(user,"123456").Result;
-                    if(result.Succeeded)
+                    var result = userManager.CreateAsync(user, "123456").Result;
+                    if (result.Succeeded)
                     {
                         result = userManager.AddToRoleAsync(user, Roles.Admin).Result;
                     }
                 }
 
                 #endregion
+
+                #region Додавання категорій
+
+                if (context.Categories.Count() < 10)
+                {
+                    var fakeCategory = new Faker<CategoryEntity>("uk")
+                                        .RuleFor(o => o.IsDeleted, f => false)
+                                        .RuleFor(o => o.DateCreated, f => DateTime.UtcNow)
+                                        .RuleFor(o => o.Name, f => f.Commerce.Categories(1)[0]);
+                    var list = fakeCategory.Generate(10);
+
+                    foreach(var category in list)
+                    {
+                        category.Image = ImageWorker.SaveImageFromUrlAsync("https://loremflickr.com/800/600").Result;
+                        context.Categories.Add(category);
+                        context.SaveChanges();
+                    }
+
+                }
+
+                #endregion
+
 
                 #region Додавання товарів
 
@@ -101,12 +123,16 @@ namespace WebRozetka.Data
                     foreach (var product in fakeProducts)
                     {
                         var numberOfPhotos = faker.Random.Number(1, 3);
-                        
+
                         for (int i = 0; i < numberOfPhotos; i++)
                         {
                             var fakeImage = ImageWorker.SaveImageFromUrlAsync("https://loremflickr.com/800/600").Result;
-                            photos.Add(new ProductImageEntity { Name = fakeImage, ProductId = product.Id, 
-                                Priority=(byte)(i+1) });
+                            photos.Add(new ProductImageEntity
+                            {
+                                Name = fakeImage,
+                                ProductId = product.Id,
+                                Priority = (byte)(i + 1)
+                            });
                         }
                     }
                     context.AddRange(photos);
@@ -116,6 +142,6 @@ namespace WebRozetka.Data
 
             #endregion
         }
-        
+
     }
 }
